@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add / Edit Weekly Availability</title>
+</head>
+<body>
+
+<h2>Add / Edit Weekly Availability</h2>
+
+<form id="availabilityForm">
+    <input type="hidden" id="availabilityId" />
+
+    <label>
+        Day:
+        <select id="dayOfWeek">
+            <option>MONDAY</option>
+            <option>TUESDAY</option>
+            <option>WEDNESDAY</option>
+            <option>THURSDAY</option>
+            <option>FRIDAY</option>
+        </select>
+    </label>
+
+    <br/><br/>
+
+    <label>
+        Start Time:
+        <input type="time" id="startTime" required />
+    </label>
+
+    <label>
+        End Time:
+        <input type="time" id="endTime" required />
+    </label>
+
+    <br/><br/>
+
+    <label>
+        Capacity:
+        <input type="number" id="capacity" min="1" required />
+    </label>
+
+    <br/><br/>
+
+    <button type="submit">Save Availability</button>
+</form>
+
+<hr/>
+
+<h3>Existing Availability</h3>
+<ul id="availabilityList"></ul>
+
+<script>
+const dayOfWeekEl = document.getElementById("dayOfWeek");
+const startTimeEl = document.getElementById("startTime");
+const endTimeEl   = document.getElementById("endTime");
+const capacityEl  = document.getElementById("capacity");
+const idEl        = document.getElementById("availabilityId");
+const list        = document.getElementById("availabilityList");
+
+// ---------- SAVE / UPDATE ----------
+document.getElementById("availabilityForm").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    if (startTimeEl.value >= endTimeEl.value) {
+        alert("Start time must be before end time");
+        return;
+    }
+
+    const body = {
+        dayOfWeek: dayOfWeekEl.value,
+        startTime: startTimeEl.value,
+        endTime: endTimeEl.value,
+        capacity: Number(capacityEl.value)
+    };
+
+    const id = idEl.value;
+    const url = id
+        ? `http://localhost:8080/api/availability/${id}`
+        : `http://localhost:8080/api/availability`;
+
+    const method = id ? "PUT" : "POST";
+
+    const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+    });
+
+    alert(await res.text());
+    idEl.value = "";
+    loadAvailability();
+});
+
+// ---------- LOAD ----------
+async function loadAvailability() {
+    const res = await fetch("http://localhost:8080/api/availability");
+    const data = await res.json();
+
+    list.innerHTML = "";
+
+    data.forEach(a => {
+        const li = document.createElement("li");
+
+        li.innerHTML = `
+            <strong>ID:</strong> ${a.id}
+            | <strong>${a.dayOfWeek}</strong>
+            ${a.startTime} - ${a.endTime}
+            (Capacity: ${a.capacity})
+
+            <button onclick="editAvailability(
+                ${a.id},
+                '${a.dayOfWeek}',
+                '${a.startTime}',
+                '${a.endTime}',
+                ${a.capacity}
+            )">Edit</button>
+
+            <button onclick="viewSlots(${a.id})">
+                View Slots
+            </button>
+        `;
+
+        list.appendChild(li);
+    });
+}
+
+// ---------- EDIT ----------
+function editAvailability(id, day, start, end, cap) {
+    idEl.value = id;
+    dayOfWeekEl.value = day;
+    startTimeEl.value = start;
+    endTimeEl.value = end;
+    capacityEl.value = cap;
+}
+
+// ---------- VIEW SLOTS (ONLY BY AVAILABILITY) ----------
+function viewSlots(id) {
+    window.location.href = `/slots?availabilityId=${id}`;
+}
+
+// init
+loadAvailability();
+</script>
+
+</body>
+</html>

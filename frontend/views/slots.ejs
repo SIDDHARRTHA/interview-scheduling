@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interview Slots</title>
+</head>
+<body>
+
+<h2>Interview Slots</h2>
+<a href="/availability">← Back</a>
+
+<br/><br/>
+
+<label>
+    Your Email:
+    <input type="email" id="candidateEmail" placeholder="Enter your email" required>
+</label>
+
+<hr/>
+
+<!-- Slots injected from Express -->
+<script id="slots-data" type="application/json">
+    <%- JSON.stringify(slots) %>
+</script>
+
+<div id="slots-container"></div>
+
+<script>
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// ✅ Read slots safely
+const slots = JSON.parse(
+    document.getElementById("slots-data").textContent
+);
+
+// 🔍 DEBUG (keep for now)
+console.log("Slots from backend:", slots);
+
+// ❌ No slots
+if (!slots || slots.length === 0) {
+    document.getElementById("slots-container").innerHTML =
+        "<p>No slots available.</p>";
+    throw new Error("No slots");
+}
+
+// ✅ Group by date
+const groupedSlots = {};
+slots.forEach(s => {
+    const date = s.startTime.split("T")[0];
+    groupedSlots[date] = groupedSlots[date] || [];
+    groupedSlots[date].push(s);
+});
+
+// ✅ Render
+const container = document.getElementById("slots-container");
+
+Object.keys(groupedSlots).sort().forEach(date => {
+    const h3 = document.createElement("h3");
+    h3.textContent = "📅 " + date;
+    container.appendChild(h3);
+
+    const ul = document.createElement("ul");
+
+    groupedSlots[date].forEach(s => {
+        const time = s.startTime.split("T")[1].substring(0,5);
+
+        const li = document.createElement("li");
+        li.innerHTML = `
+            <strong>Slot ID:</strong> ${s.id} |
+            <strong>${time}</strong>
+            (Booked: ${s.booked} / ${s.capacity})
+            ${
+                s.booked < s.capacity
+                ? `<button data-id="${s.id}">Book</button>`
+                : `<span style="color:red;"> Slot Full</span>`
+            }
+        `;
+        ul.appendChild(li);
+    });
+
+    container.appendChild(ul);
+});
+
+// ✅ Booking
+document.addEventListener("click", async e => {
+    if (e.target.tagName !== "BUTTON") return;
+
+    const emailInput = document.getElementById("candidateEmail");
+    const email = emailInput.value.trim();
+
+    if (!email || !emailRegex.test(email)) {
+        alert("Enter a valid email");
+        emailInput.focus();
+        return;
+    }
+
+    const slotId = e.target.dataset.id;
+
+    const res = await fetch(
+        `http://localhost:8080/api/book/${slotId}?email=${encodeURIComponent(email)}`,
+        { method: "POST" }
+    );
+
+    if (res.status === 409) {
+        alert("Already booked or slot full");
+    } else if (res.ok) {
+        alert("Booked successfully");
+        location.reload();
+    } else {
+        alert("Booking failed");
+    }
+});
+</script>
+
+</body>
+</html>
