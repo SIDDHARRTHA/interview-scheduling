@@ -1,280 +1,195 @@
-# 🗓️ Interview Scheduling System
+📅 Interview Scheduling System
 
-A **full-stack Interview Slot Scheduling System** built using **Java Spring Boot**, **MySQL**, and **Node.js (Express + EJS)**.  
-This system allows interviewers to define weekly availability and enables candidates to book interview slots safely with full data integrity.
+A full-stack Interview Scheduling System that allows interviewers to define weekly availability and enables candidates to view and book interview slots seamlessly.
 
----
+The system automatically generates interview slots for the upcoming two weeks based on interviewer availability, enforces booking limits, and ensures data consistency using transactional backend logic.
 
-## 👤 Author
+🚀 Key Features
+👩‍💼 Interviewer
 
-**Siddharrtha Shankar**  
-GitHub: https://github.com/SIDDHARRTHA
+Add weekly availability (day, start time, end time, capacity)
 
----
+Update availability with automatic slot regeneration
 
-## 📌 Project Overview
+Prevent invalid time ranges (start time must be before end time)
 
-This application addresses real-world interview scheduling challenges by providing a reliable and scalable booking workflow.
+Capacity-based interview scheduling
 
-### Core Capabilities
-- Define weekly interview availability
-- Auto-generate 30-minute interview slots for the next 14 days
-- Allow candidates to book exactly one slot
-- Prevent overbooking and duplicate bookings
-- Regenerate slots safely after availability updates
+👨‍🎓 Candidate
 
----
+View available interview slots
 
-## 🖼️ Application Screenshots
+Slots grouped date-wise
 
-### 🏠 Main Dashboard
-![Main Dashboard](assets/main.png)
+Book only one slot per email
 
-### ✏️ Availability After Edit
-![Availability After Edit](assets/afteredit.png)
+Prevents overbooking once capacity is full
 
-### 🗓️ Interview Slots View
-![Available Interview Slots](assets/slots.png)
+⚙️ System Capabilities
 
----
+30-minute interview slots
 
-## 🏗️ System Architecture
+Slot generation for next 14 days
 
-Frontend (Node.js + Express + EJS)
-|
-| REST APIs
-v
-Backend (Spring Boot)
-|
-v
-MySQL Database
+Transaction-safe booking
 
-yaml
-Copy code
+Clean REST APIs
 
----
+Backend validation + frontend validation
 
-## 🛠️ Tech Stack
-
-### Backend
-- Java 17
-- Spring Boot 3.x
-- Spring Data JPA (Hibernate)
-- MySQL
-- Maven
-
-### Frontend
-- Node.js
-- Express.js
-- EJS (Server-side Rendering)
-- Axios / Fetch API
-
-### Database
-- MySQL
-- InnoDB (Foreign Keys + Transactions)
-
----
-
-## ✨ Key Features
-
-### Availability Management
-- Create and update weekly availability
-- Validate start and end times
-- Prevent invalid or overlapping schedules
-
-### Slot Generation
-- Generate slots for the next two weeks
-- Fixed 30-minute duration
-- Safe cleanup and regeneration logic
-
-### Slot Booking
-- One booking per candidate email
-- Slot capacity enforcement
-- Transaction-safe booking process
-
-### Error Handling
-- Slot full exception handling
-- Duplicate booking prevention
-- Meaningful HTTP status codes
-
----
-
-## 📂 Project Structure
-
+🛠️ Tech Stack
+Layer	Technology
+Backend	Java, Spring Boot
+ORM	Spring Data JPA (Hibernate)
+Database	MySQL
+Frontend	Node.js, Express, EJS
+API Style	REST
+Build Tool	Maven
+Versioning	Git
+📂 Project Structure
 interview-scheduling/
 │
 ├── backend/
 │   ├── src/main/java/com/app/interview/
 │   │   ├── controller/
-│   │   │   └── InterviewController.java   # REST APIs for availability, slots, booking
+│   │   │   └── InterviewController.java   # REST APIs
 │   │   │
 │   │   ├── service/
 │   │   │   └── InterviewService.java      # Business logic
 │   │   │
 │   │   ├── model/
 │   │   │   ├── WeeklyAvailability.java    # Availability entity
-│   │   │   ├── InterviewSlot.java          # Slot entity
-│   │   │   └── Booking.java                # Booking entity
+│   │   │   ├── InterviewSlot.java         # Slot entity
+│   │   │   └── Booking.java               # Booking entity
 │   │   │
 │   │   ├── repository/
-│   │   │   ├── AvailabilityRepository.java
-│   │   │   ├── SlotRepository.java
+│   │   │   ├── WeeklyAvailabilityRepository.java
+│   │   │   ├── InterviewSlotRepository.java
 │   │   │   └── BookingRepository.java
 │   │   │
 │   │   ├── exception/
-│   │   │   ├── SlotFullException.java      # Custom exception
-│   │   │   └── GlobalExceptionHandler.java # Centralized error handling
+│   │   │   ├── SlotFullException.java
+│   │   │   └── GlobalExceptionHandler.java
 │   │   │
 │   │   └── config/
-│   │       └── CorsConfig.java             # CORS configuration
+│   │       └── CorsConfig.java
 │   │
 │   └── src/main/resources/
-│       └── application.yml                 # DB & server configuration
+│       └── application.yml
 │
 ├── frontend/
-│   ├── app.js                              # Express app entry point
-│   ├── package.json                        # Frontend dependencies
+│   ├── app.js
+│   ├── package.json
 │   │
 │   └── views/
-│       ├── availability.ejs                # Weekly availability UI
-│       └── slots.ejs                       # Interview slots UI
+│       ├── availability.ejs
+│       └── slots.ejs
 │
 ├── database/
-│   └── schema.sql                          # MySQL database schema
+│   └── schema.sql
 │
 ├── assets/
-│   ├── main.png                            # Main dashboard screenshot
-│   ├── afteredit.png                       # Availability edit screenshot
-│   └── slots.png                           # Slots view screenshot
+│   ├── main.png
+│   ├── afteredit.png
+│   └── slots.png
 │
-├── README.md                               # Project documentation
-├── .env                                   # Environment variables
-└── .gitignore                              # Ignored files
+├── README.md
+├── .env
+└── .gitignore
+## 🖼️ Application Screenshots
+### 🏠 Main Dashboard ![Main Dashboard](assets/main.png)
+### ✏️ Availability After Edit ![Availability After Edit](assets/afteredit.png) 
+### 🗓️ Interview Slots View ![Available Interview Slots](assets/slots.png)
 
----
+🔐 Business Rules Implemented
 
-## 🧠 API Endpoints
+Start time must be before end time
 
-### Availability
-| Method | Endpoint | Description |
-|------|---------|-------------|
-| GET | `/api/availability` | Fetch all availability |
-| POST | `/api/availability` | Add availability |
-| PUT | `/api/availability/{id}` | Update availability |
+Slots generated only for selected weekday
 
-### Slots
-| Method | Endpoint | Description |
-|------|---------|-------------|
-| GET | `/api/slots/by-availability/{id}` | Fetch slots |
+Fixed slot duration: 30 minutes
 
-### Booking
-| Method | Endpoint | Description |
-|------|---------|-------------|
-| POST | `/api/book/{slotId}?email=` | Book interview slot |
+One booking per candidate email
 
----
+Capacity-based booking enforcement
 
-## 🗄️ Database Design
+Slots regenerated safely on availability update
 
-### weekly_availability
-- id
-- day_of_week
-- start_time
-- end_time
-- capacity
+🔗 API Endpoints
+Availability
+GET    /api/availability
+POST   /api/availability
+PUT    /api/availability/{id}
 
-### interview_slot
-- id
-- start_time
-- end_time
-- capacity
-- booked
-- availability_id (FK)
+Slots
+GET    /api/slots/by-availability/{availabilityId}
 
-### booking
-- id
-- candidate_email (UNIQUE)
-- slot_id (FK)
+Booking
+POST   /api/book/{slotId}?email=user@example.com
 
----
-
-## 🚀 How to Run the Project
-
-### Database Setup
-```sql
-CREATE DATABASE interview_db;
-Run:
-
-pgsql
-Copy code
-database/schema.sql
-Backend Setup
-bash
-Copy code
+⚙️ How to Run Locally
+1️⃣ Backend (Spring Boot)
 cd backend
-mvn clean install
 mvn spring-boot:run
-Backend URL:
 
-arduino
-Copy code
+
+Backend runs on:
+
 http://localhost:8080
-Frontend Setup
-bash
-Copy code
+
+2️⃣ Frontend (Node + Express)
 cd frontend
 npm install
 npm start
-Frontend URL:
 
-arduino
-Copy code
+
+Frontend runs on:
+
 http://localhost:3000
-🧪 Testing Flow
-Open frontend application
 
-Add weekly availability
+3️⃣ Database Setup
+CREATE DATABASE interview_db;
 
-View generated interview slots
 
-Book a slot using email
+Tables are auto-created by Hibernate
 
-Attempt duplicate booking (blocked)
+Optional base schema available in database/schema.sql
 
-Attempt booking a full slot (blocked)
+🧠 Design Highlights (Interview Ready)
 
-🔐 Data Integrity & Safety
-Foreign key constraints enforced
+Clean layered architecture (Controller → Service → Repository)
 
-Transactional slot booking
+Proper JPA relationships (@OneToMany, @ManyToOne)
 
-Safe slot regeneration
+Transaction management using @Transactional
 
-Backend-level validation
+Defensive validation at frontend and backend
 
-📝 Future Enhancements
-Delete availability
+Slot regeneration logic avoids duplication
 
-Maximum interviews per week
+Race-condition-safe booking
 
-Admin authentication
+📌 Future Enhancements
 
-Slot pagination
+Delete availability safely
 
-Docker support
+Weekly interview limit per interviewer
 
-📜 License
-This project is created for educational and interview evaluation purposes.
+Role-based access (Interviewer / Candidate)
 
-⭐ Final Notes
-This project demonstrates:
+Swagger API documentation
 
-Clean REST API design
+Calendar-based UI
 
-Robust database schema
+Email notifications
 
-Race condition handling
+👨‍💻 Author
 
-Real-world scheduling logic
+Siddharrtha Shankar
+🔗 GitHub: https://github.com/SIDDHARRTHA
 
-End-to-end full-stack integration
+Built as a real-world interview assignment & full-stack backend project.
+
+📄 License
+
+This project is licensed under the MIT License.
