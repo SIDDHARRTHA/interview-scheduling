@@ -104,35 +104,52 @@ Copy code
 interview-scheduling/
 │
 ├── backend/
-│ ├── src/main/java/com/app/interview/
-│ │ ├── controller/
-│ │ ├── service/
-│ │ ├── model/
-│ │ ├── repository/
-│ │ ├── exception/
-│ │ └── config/
-│ └── src/main/resources/
+│   ├── src/main/java/com/app/interview/
+│   │   ├── controller/
+│   │   │   └── InterviewController.java   # REST APIs for availability, slots, booking
+│   │   │
+│   │   ├── service/
+│   │   │   └── InterviewService.java      # Business logic
+│   │   │
+│   │   ├── model/
+│   │   │   ├── WeeklyAvailability.java    # Availability entity
+│   │   │   ├── InterviewSlot.java          # Slot entity
+│   │   │   └── Booking.java                # Booking entity
+│   │   │
+│   │   ├── repository/
+│   │   │   ├── AvailabilityRepository.java
+│   │   │   ├── SlotRepository.java
+│   │   │   └── BookingRepository.java
+│   │   │
+│   │   ├── exception/
+│   │   │   ├── SlotFullException.java      # Custom exception
+│   │   │   └── GlobalExceptionHandler.java # Centralized error handling
+│   │   │
+│   │   └── config/
+│   │       └── CorsConfig.java             # CORS configuration
+│   │
+│   └── src/main/resources/
+│       └── application.yml                 # DB & server configuration
 │
 ├── frontend/
-│ ├── app.js
-│ ├── package.json
-│ └── views/
-│ ├── availability.ejs
-│ └── slots.ejs
+│   ├── app.js                              # Express app entry point
+│   ├── package.json                        # Frontend dependencies
+│   │
+│   └── views/
+│       ├── availability.ejs                # Weekly availability UI
+│       └── slots.ejs                       # Interview slots UI
 │
 ├── database/
-│ └── schema.sql
+│   └── schema.sql                          # MySQL database schema
 │
 ├── assets/
-│ ├── main.png
-│ ├── afteredit.png
-│ └── slots.png
+│   ├── main.png                            # Main dashboard screenshot
+│   ├── afteredit.png                       # Availability edit screenshot
+│   └── slots.png                           # Slots view screenshot
 │
-├── README.md
-└── .gitignore
-
-yaml
-Copy code
+├── README.md                               # Project documentation
+├── .env                                   # Environment variables
+└── .gitignore                              # Ignored files
 
 ---
 
